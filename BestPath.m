@@ -249,6 +249,9 @@ end
 
 function cost = GetCost(E, Costs, rowCount, r, c, offset)
 % This helper local function computes the total cost
+% if were to choose the path from (r,c) to the east edge
+% via (r+offset,c).
+% An inf is returned if r2 is nonexistent.
 	r2 = r + offset;
 	if 1 <= r2 && r2 <= rowCount
 		cost = Costs(r2, GetCol(c + 1)) + abs(E(r, c) - E(r2, c + 1));
@@ -258,5 +261,10 @@ function cost = GetCost(E, Costs, rowCount, r, c, offset)
 end
 
 function costCol = GetCol(c)
+% This helper local function maps the actual column
+% number of a given position to one of the two
+% columns inside the Costs 2d array. The Costs column
+% is alternated between 1 and 2 as the real column
+% number changes.
 	costCol = mod(c, 2) + 1;
 end
