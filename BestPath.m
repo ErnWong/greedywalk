@@ -245,9 +245,6 @@ function [pathRow, pathCol, pathElev] = BestPath(E)
 		pathElev(c) = E(pathRow(c), c);
 	end
 
-	% Debugging purposes. Plot cost curve.
-	PlotCost(Costs, pathRow, bestCost);
-
 end
 
 function cost = GetCost(E, Costs, rowCount, r, c, offset)
@@ -262,13 +259,4 @@ end
 
 function costCol = GetCol(c)
 	costCol = mod(c, 2) + 1;
-end
-
-function PlotCost(Costs, pathRow, bestCost)
-	if false && size(Costs,1) > 100
-		figure(5);
-		plot(Costs(:,GetCol(1)));
-		fprintf('# best starting pos is row %d with cost %f\n', pathRow(1), bestCost);
-		fprintf('# The next rows are: %d, %d, %d, %d, %d\n', pathRow(2), pathRow(3), pathRow(4), pathRow(5), pathRow(6));
-	end
 end
