@@ -1,4 +1,4 @@
-function[testCount, okayCount] = testBestGreedyPath()
+function[testCount, okayCount] = TestBestGreedyPath()
 
 	clear;
 

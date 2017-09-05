@@ -1,4 +1,4 @@
-function [testCount, okayCount] = testBestPath()
+function [testCount, okayCount] = TestBestPath()
 
 	clear;
 
