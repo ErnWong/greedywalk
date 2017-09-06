@@ -8,7 +8,7 @@ function [testCount, okayCount] = TestBestPath()
 	disp('# | Testing BestPath.m |');
 	disp('# `--------------------`');
 
-	testCount = 9;
+	testCount = 10;
 	okayCount = 0;
 	fprintf('\n');
 	fprintf('1..%d\n', testCount);
@@ -136,6 +136,36 @@ function [testCount, okayCount] = TestBestPath()
 	  5 0 2 2
 	];
 	okayCount = okayCount + TestFunction(@BestPath, 9, {E9}, {[1 2 3 4], [1 2 3 4], [1 1 0 2]});
+
+	disp('# Performing 10x10 randomised test');
+	disp('# (1) Generating elevations');
+	E10 = randi(1000, 10);
+	disp('# (2) Running BestPath');
+	[~, ~, elev] = BestPath(E10);
+	daCost = sum(abs(elev(2:10) - elev(1:9)));
+	fprintf('# BestPath cost: %d\n', daCost);
+	disp('# (3) Running naive method');
+	bestCost = inf;
+	for r1 = 1:10
+		for pathNum = 0:3^9-1
+			pathRows = cumsum([r1, dec2base(pathNum, 3, 9) - '1']);
+			if min(pathRows) < 1 || max(pathRows) > 10
+				continue;
+			end
+			currElevs = E10(sub2ind(size(E10),pathRows,1:10));
+			currCost = sum(abs(currElevs(2:10) - currElevs(1:9)));
+			if currCost < bestCost
+				bestCost = currCost;
+				fprintf('# Current best: %d\n', bestCost);
+			end
+		end
+	end
+	if bestCost == daCost
+		okayCount = okayCount + 1;
+		disp('okay 10');
+	else
+		disp('not ok 10');
+	end
 
 
 	disp('# Generating Visual Test');
