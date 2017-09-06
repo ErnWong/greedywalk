@@ -162,7 +162,7 @@ function [testCount, okayCount] = TestBestPath()
 	end
 	if bestCost == daCost
 		okayCount = okayCount + 1;
-		disp('okay 10');
+		disp('ok 10');
 	else
 		disp('not ok 10');
 	end
