@@ -69,7 +69,7 @@ function [testCount, okayCount] = TestBestPath()
 		  end
 		end
 	  end
-	  toc;
+	  fprintf('# BestPath completed in %f seconds\n', toc);
 	  if ~hasErrored
 		fprintf('# Brute force tested %d inputs\n', k^9);
 		fprintf('ok 1 - Brute force test completed without error!\n');
@@ -176,7 +176,7 @@ function [testCount, okayCount] = TestBestPath()
 	disp('# Computing Path');
 	tic;
 	[pathRow, pathCol, pathElev] = BestPath(E);
-	toc;
+	fprintf('# BestPath completed in %f seconds\n', toc);
 	disp('# Adding path to surface color data');
 	C = E;
 	for c = pathCol
