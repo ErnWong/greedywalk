@@ -234,7 +234,7 @@ function [pathRow, pathCol, pathElev] = BestPath(Elevations)
 	% above and below the actual data
 	Costs = zeros(rowCount, 2);
 
-	% 2D array reprenting which east neighbour to go to next
+	% 2D array representing which east neighbour to go to next
 	%  = 1, 2 or 3 representing r-1, r, r+1 respectively.
 	Trail = zeros(actualRowCount, colCount - 1, 'int8');
 
