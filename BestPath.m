@@ -23,6 +23,7 @@ function [pathRow, pathCol, pathElev] = BestPath(Elevations)
 % This function is now vectorised, so instead of manually looping over
 % each row of each column, the entire column is computed as a vectorised
 % operation. Performance gain: 5x.
+% Optmization inspired by https://stackoverflow.com/q/26070212
 %
 % Proof of correctness:
 %
