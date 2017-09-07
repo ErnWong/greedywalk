@@ -8,7 +8,7 @@ function [testCount, okayCount] = TestBestPath()
 	disp('# | Testing BestPath.m |');
 	disp('# `--------------------`');
 
-	testCount = 10;
+	testCount = 16;
 	okayCount = 0;
 	fprintf('\n');
 	fprintf('1..%d\n', testCount);
@@ -137,34 +137,53 @@ function [testCount, okayCount] = TestBestPath()
 	];
 	okayCount = okayCount + TestFunction(@BestPath, 9, {E9}, {[1 2 3 4], [1 2 3 4], [1 1 0 2]});
 
-	disp('# Performing 10x10 randomised test');
-	disp('# (1) Generating elevations');
-	E10 = randi(1000, 10);
-	disp('# (2) Running BestPath');
-	[~, ~, elev] = BestPath(E10);
-	daCost = sum(abs(elev(2:10) - elev(1:9)));
-	fprintf('# BestPath cost: %d\n', daCost);
-	disp('# (3) Running naive method');
-	bestCost = inf;
-	for r1 = 1:10
-		for pathNum = 0:3^9-1
-			pathRows = cumsum([r1, dec2base(pathNum, 3, 9) - '1']);
-			if min(pathRows) < 1 || max(pathRows) > 10
-				continue;
-			end
-			currElevs = E10(sub2ind(size(E10),pathRows,1:10));
-			currCost = sum(abs(currElevs(2:10) - currElevs(1:9)));
-			if currCost < bestCost
-				bestCost = currCost;
-				fprintf('# Current best: %d\n', bestCost);
+	for i = 1:3
+		fprintf('# Performing 10x10 randomised test %d\n', i);
+		disp('# (1) Generating elevations');
+		E10 = randi(1000, 10);
+		disp('# (2) Running BestPath');
+		[~, ~, elev] = BestPath(E10);
+		daCost = sum(abs(elev(2:10) - elev(1:9)));
+		fprintf('# BestPath cost: %d\n', daCost);
+		disp('# (3) Running naive method');
+		bestCost = inf;
+		for r1 = 1:10
+			for pathNum = 0:3^9-1
+				pathRows = cumsum([r1, dec2base(pathNum, 3, 9) - '1']);
+				if min(pathRows) < 1 || max(pathRows) > 10
+					continue;
+				end
+				currElevs = E10(sub2ind(size(E10),pathRows,1:10));
+				currCost = sum(abs(currElevs(2:10) - currElevs(1:9)));
+				if currCost < bestCost
+					bestCost = currCost;
+					fprintf('# Current best: %d\n', bestCost);
+				end
 			end
 		end
+		if bestCost == daCost
+			okayCount = okayCount + 1;
+			fprintf('ok %d\n', 9 + i);
+		else
+			fprintf('not ok %d\n', 9 + i);
+		end
 	end
-	if bestCost == daCost
-		okayCount = okayCount + 1;
-		disp('ok 10');
-	else
-		disp('not ok 10');
+
+	for i = 1:4
+		fprintf('# Performance Test %d\n', i);
+		disp('# (1) Generating elevations');
+		E = randi(1000, 1000);
+		disp('# (2) Running BestPath');
+		tic;
+		BestPath(E);
+		t = toc;
+		fprintf('# ==> BestPath took %f seconds\n', t);
+		if t < 10
+			okayCount = okayCount + 1;
+			fprintf('ok %d\n', 12 + i);
+		else
+			fprintf('not ok %d\n', 12 + i);
+		end
 	end
 
 
