@@ -8,7 +8,7 @@ function[testCount, okayCount] = TestBestGreedyPathUnoptimized()
 	disp('# | Testing BestGreedyPathUnoptimized.m |');
 	disp('# `-------------------------------------`');
 
-	testCount = 11;
+	testCount = 7;
 	okayCount = 0;
 
 	fprintf('\n');
@@ -61,22 +61,22 @@ function[testCount, okayCount] = TestBestGreedyPathUnoptimized()
 	];
 	okayCount = okayCount + TestFunction(@BestGreedyPathUnoptimized, 7, {E7}, {[3 2 1], [1 2 3], [1 2 1]});
 
-	for i = 1:2
-		fprintf('# Performance Test %d\n', i);
-		disp('# (1) Generating elevations');
-		E = randi(1000, 100);
-		disp('# (2) Running BestGreedyPathUnoptimized');
-		tic;
-		BestGreedyPathUnoptimized(E);
-		t = toc;
-		fprintf('# ==> BestGreedyPathUnoptimized took %f seconds\n', t);
-		if t < 10
-			okayCount = okayCount + 1;
-			fprintf('ok %d\n', 7 + i);
-		else
-			fprintf('not ok %d\n', 7 + i);
-		end
-	end
+	% for i = 1:2
+	% 	fprintf('# Performance Test %d\n', i);
+	% 	disp('# (1) Generating elevations');
+	% 	E = randi(1000, 100);
+	% 	disp('# (2) Running BestGreedyPathUnoptimized');
+	% 	tic;
+	% 	BestGreedyPathUnoptimized(E);
+	% 	t = toc;
+	% 	fprintf('# ==> BestGreedyPathUnoptimized took %f seconds\n', t);
+	% 	if t < 10
+	% 		okayCount = okayCount + 1;
+	% 		fprintf('ok %d\n', 7 + i);
+	% 	else
+	% 		fprintf('not ok %d\n', 7 + i);
+	% 	end
+	% end
 
 	fprintf('\n# TestBestGreedyPathUnoptimized - %d / %d tests passed\n', okayCount, testCount);
 	disp('# TestBestGreedyPathUnoptimized - Done');

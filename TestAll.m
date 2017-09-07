@@ -15,8 +15,9 @@ okayCount = [];
 [testCount(4), okayCount(4)] = TestGreedyWalk;
 [testCount(5), okayCount(5)] = TestFindPathElevationsAndCost;
 [testCount(6), okayCount(6)] = TestBestGreedyPathHeadingEast;
-[testCount(7), okayCount(7)] = TestBestGreedyPath;
-[testCount(8), okayCount(8)] = TestBestPath;
+[testCount(7), okayCount(7)] = TestBestGreedyPathUnoptimized;
+[testCount(8), okayCount(8)] = TestBestGreedyPath;
+[testCount(9), okayCount(9)] = TestBestPath;
 
 fprintf('\n\n# SUMMARY: %d / %d tests passed\n', sum(okayCount), sum(testCount));
 
