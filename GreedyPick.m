@@ -31,18 +31,15 @@ function newPos = GreedyPick(currPos, direction, E)
 	ESize = size(E);
 	nextCol = currPos(2) + direction;
 
-	% midIndex is the array linear index of the middle neighbour.
-	midIndex = sub2ind(ESize, currPos(1), nextCol);
-
 	% Construct array of possible neighbours
 	% Non-existent neighbours will have NaN value
 	% which the min function ignores.
-	nextElevs = [NaN, E(midIndex), NaN];
+	nextElevs = [NaN, E(currPos(1), nextCol), NaN];
 	if currPos(1) > 1
-		nextElevs(1) = E(midIndex - 1);
+		nextElevs(1) = E(currPos(1) - 1, nextCol);
 	end
 	if currPos(1) < ESize(1)
-		nextElevs(3) = E(midIndex + 1);
+		nextElevs(3) = E(currPos(1) + 1, nextCol);
 	end
 
 	% Search and compute the minimal-cost position
