@@ -33,7 +33,7 @@ function [pathRows, pathCols, elev] = BestGreedyPath(E)
 	for r = 1 : rowCount
 		for c = 1 : colCount
 
-			% Generate partial paths
+			% Generate partial paths from current position
 			[currRowsWest, currColsWest] = GreedyWalk([r, c], -1, E);
 			[currRowsEast, currColsEast] = GreedyWalk([r, c], +1, E);
 
@@ -42,9 +42,11 @@ function [pathRows, pathCols, elev] = BestGreedyPath(E)
 			currCols = [currColsWest(end:-1:2), currColsEast];
 
 			% Compute cost and elevation
-			[currElev, currCost] = FindPathElevationsAndCost(currRows, currCols, E);
+			[currElev, currCost] = ...
+				FindPathElevationsAndCost(currRows, currCols, E);
 
-			% Update output variables only if cost improves previous running best
+			% Update output variables only if
+			% the current cost improves previous running best
 			if currCost < bestCost
 				pathRows = currRows;
 				pathCols = currCols;
