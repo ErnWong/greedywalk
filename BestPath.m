@@ -1,12 +1,12 @@
-function [pathRow, pathCol, pathElev] = BestPath(E)
+function [pathRow, pathCol, pathElev] = BestPath(Elevations)
 % Project - BestPath
 %
-% [pathRow, pathCol, pathElev] = BestPath(E)
+% [pathRow, pathCol, pathElev] = BestPath(Elevations)
 %
 % Generates the path with minimal cost, where cost equates to
 % the sum of all (absolute) elevation changes encountered in
 % the path. This algorithm completes in O(n) time where n=R*C
-% is the number of elements in the 2d array E.
+% is the number of elements in the 2d array Elevations.
 %
 % Implementation Sumary:
 %
@@ -210,54 +210,74 @@ function [pathRow, pathCol, pathElev] = BestPath(E)
 % Author: Ernest Wong (ewon746)
 % Date: 2017-09-03
 
-	[rowCount, colCount] = size(E);
+	[actualRowCount, colCount] = size(Elevations);
 
-	% Preallocation
+	% Row count for the padded arrays (see below)
+	rowCount = actualRowCount + 2;
 
-	% Costs - the minimum cost to travel from the position to the east edge
-	%       - Note: uses GetCol to alternate between current and previous costs
+	% Elevations data padded with 1 row of NaNs
+	% above and below. Makes calculations streamlined
+	% and easily vectorized.
+	E(2:rowCount-1,:) = Elevations;
+	E([1 rowCount],:) = NaN;
+
+	% 2D array representing optimal cost to travel from
+	% the given position to the eastern edge.
+	% Note that this array is padded with 1 row of zeros
+	% above and below the actual data
 	Costs = zeros(rowCount, 2);
 
-	% Prev - the optimal next position to travel to relative to current row
-	%      - -1 for row (r-1), 0 for row (r), +1 for row (r+1)
-	Prev = zeros(rowCount, colCount, 'int8');
+	% 2D array reprenting which east neighbour to go to next
+	%  = 1, 2 or 3 representing r-1, r, r+1 respectively.
+	Trail = zeros(actualRowCount, colCount - 1, 'int8');
 
-	% Compute from east to west, going down rows first
+	% Generate neighbour row nunmbers for each column.
+	% OffsetIndices =
+	%    1 2 3
+	%    2 3 4
+	%    3 4 5
+	%    4 5 6
+	%     etc.
+	OffsetIndices = bsxfun(@plus, (1 : actualRowCount)', [0 1 2]);
+
+	% Row numbers inside the Costs and E matrix that
+	% represents actual rows.
+	% rows = 2 3 4 5 ... etc
+	rows = (1 : actualRowCount) + 1;
+
+	% Compute from east to west starting from the second last column
 	for c = (colCount - 1) : -1 : 1
-		for r = 1 : rowCount
-			[Costs(r, GetCol(c)), i] = min([
-				GetCost(E, Costs, rowCount, r, c, -1),
-				GetCost(E, Costs, rowCount, r, c, 0),
-				GetCost(E, Costs, rowCount, r, c, +1)
-			]);
-			Prev(r, c) = i - 2;
-		end
+
+		% Compute neighbour indices for current column
+		NId = OffsetIndices + c * rowCount;
+		NCId = OffsetIndices + (GetCol(c - 1) - 1) * rowCount;
+
+		% Compute immediate elevation changes
+		ElevChanges = abs(E(rows, c) - E(NId));
+
+		% Find best neighbours for entire column
+		[Costs(rows, GetCol(c)), Trail(:, c)] = ...
+			min(Costs(NCId) + ElevChanges, [], 2);
+
 	end
 
-	% Generate path information from trails.
+	% Finally, generate path information from trails...
+
 	pathCol = 1 : colCount;
 	pathRow = zeros(1, colCount);
 	pathElev = zeros(1, colCount, 'int32');
-	[bestCost, pathRow(1)] = min(Costs(:,GetCol(1)));
-	pathElev(1) = E(pathRow(1), 1);
+
+	% Pick the best starting row
+	[~, pathRow(1)] = min(Costs(rows,GetCol(1)));
+	pathElev(1) = Elevations(pathRow(1), 1);
+
+	% Follow trail
 	for c = 2 : colCount
-		pathRow(c) = pathRow(c - 1) + int32(Prev(pathRow(c - 1), c - 1));
-		pathElev(c) = E(pathRow(c), c);
+		% int8 -> int32 conversion needed to prevent overflow
+		pathRow(c) = pathRow(c - 1) + int32(Trail(pathRow(c - 1), c - 1)) - 2;
+		pathElev(c) = Elevations(pathRow(c), c);
 	end
 
-end
-
-function cost = GetCost(E, Costs, rowCount, r, c, offset)
-% This helper local function computes the total cost
-% if were to choose the path from (r,c) to the east edge
-% via (r+offset,c).
-% An inf is returned if r2 is nonexistent.
-	r2 = r + offset;
-	if 1 <= r2 && r2 <= rowCount
-		cost = Costs(r2, GetCol(c + 1)) + abs(E(r, c) - E(r2, c + 1));
-	else
-		cost = inf;
-	end
 end
 
 function costCol = GetCol(c)
