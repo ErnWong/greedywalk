@@ -29,7 +29,7 @@ function [pathRows, pathCols, elev] = BestGreedyPath(Elevations)
 %                    on the path.
 %
 % Author: Ernest Wong (ewon746)
-% Date: 2017-09-03
+% Date: 2017-09-08
 
 	[dataRowCount, colCount] = size(Elevations);
 
